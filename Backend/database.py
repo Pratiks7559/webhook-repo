@@ -1,8 +1,26 @@
 from flask_pymongo import PyMongo
 import os
+import re
 
-# Get MongoDB URI from environment (works on both local and Render)
-MONGODB_URI = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/webhook_db')
+def get_mongo_uri():
+    """Get and fix MongoDB URI - handle special characters in password"""
+    uri = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/webhook_db')
+    
+    # For mongodb+srv:// connections, use a different approach
+    if uri.startswith('mongodb+srv://'):
+        # Extract credentials and encode them
+        match = re.match(r'mongodb\+srv://([^:]+):(.+)@(.+)', uri)
+        if match:
+            username = match.group(1)
+            password = match.group(2)
+            rest = match.group(3)
+            from urllib.parse import quote_plus
+            uri = f"mongodb+srv://{quote_plus(username)}:{quote_plus(password)}@{rest}"
+    
+    return uri
+
+# Get MongoDB URI
+MONGODB_URI = get_mongo_uri()
 
 print(f"📦 MongoDB URI: {MONGODB_URI}")
 
