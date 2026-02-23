@@ -1,5 +1,6 @@
 // Global state
 let allEvents = [];
+let analyticsEvents = [];
 let filteredEvents = [];
 let currentFilter = 'all';
 let currentDateFilter = 'all';
@@ -27,8 +28,12 @@ function initializeApp() {
     // Fetch initial data
     fetchEvents();
     
-    // Start polling
+    // Fetch analytics data for the chart
+    fetchAnalyticsEvents();
+    
+    // Start polling - both regular events and analytics
     setInterval(fetchEvents, 15000);
+    setInterval(fetchAnalyticsEvents, 15000);
 }
 
 // Theme Toggle
@@ -360,6 +365,25 @@ function fetchEvents() {
             if (loading) {
                 loading.classList.add('hidden');
             }
+        });
+}
+
+// Fetch Analytics Events - for real-time chart updates
+function fetchAnalyticsEvents() {
+    fetch('/events/analytics')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(events => {
+            analyticsEvents = events;
+            // Update chart with analytics data
+            updateChart(analyticsEvents);
+        })
+        .catch(error => {
+            console.error("Analytics Fetch Error:", error);
         });
 }
 

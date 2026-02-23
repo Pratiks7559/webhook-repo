@@ -22,7 +22,7 @@ app = Flask(__name__,
 
 # Configure CORS with explicit settings to handle preflight requests
 CORS(app, 
-     resources={r"/events": {"origins": "*"}, 
+     resources={r"/events*": {"origins": "*"}, 
                r"/webhook": {"origins": "*"}},
      methods=["GET", "POST", "OPTIONS"],
      allow_headers=["Content-Type", "Authorization", "X-GitHub-Event"])
@@ -63,6 +63,36 @@ def get_events():
         return jsonify(events) 
     except Exception as e: 
         print(f"❌ Error fetching events: {str(e)}") 
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/events/analytics', methods=['GET'])
+def get_events_analytics():
+    """
+    Endpoint to fetch all events for analytics purposes.
+    Returns all events without limit for accurate real-time analytics.
+    """
+    try:
+        if not mongo or not db_connected:
+            print("❌ Database not connected in /events/analytics")
+            return jsonify({"error": "Database not connected"}), 503
+        
+        # Use the collection function for safer access
+        collection = get_collection()
+        
+        # Get all events sorted by most recent first - no limit for analytics
+        events = list(collection.find().sort("created_at", -1))
+        
+        # Convert ObjectId to string for JSON serialization
+        for e in events: 
+            e['_id'] = str(e['_id']) 
+            # Convert created_at datetime to ISO string for proper serialization
+            if 'created_at' in e and hasattr(e['created_at'], 'isoformat'):
+                e['created_at'] = e['created_at'].isoformat()
+            
+        print(f"✅ Fetched {len(events)} events for analytics") 
+        return jsonify(events) 
+    except Exception as e: 
+        print(f"❌ Error fetching analytics events: {str(e)}") 
         return jsonify({"error": str(e)}), 500
 
 @app.route('/webhook', methods=['GET', 'POST']) 
