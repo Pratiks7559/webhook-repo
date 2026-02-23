@@ -60,8 +60,8 @@ def get_events():
         print(f"❌ Error fetching events: {str(e)}") 
         return jsonify({"error": str(e)}), 500
 
-@app.route('/webhook', methods=['POST']) 
-def handle_webhook(): 
+@app.route('/webhook', methods=['GET', 'POST']) 
+def handle_webhook():
     try: 
         # Check if database is connected  
         if not mongo or not db_connected:  
