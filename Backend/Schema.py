@@ -1,8 +1,3 @@
-from bson.objectid import ObjectId
-from flask_pymongo import PyMongo
-
-mongo = PyMongo()
-
 class EventSchema:
     def __init__(self, request_id, author, action, from_branch, to_branch, timestamp):
         self.request_id = request_id

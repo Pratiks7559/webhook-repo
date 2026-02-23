@@ -9,8 +9,8 @@ from database import mongo, init_db, get_db, get_collection
 # 1. Load env variables
 load_dotenv()
 
-# 2. Set the Path to your Frontend folder
-frontend_path = os.path.abspath(r'E:\web-repo\Frontend') 
+# 2. Set the Path to your Frontend folder (relative path for cross-platform compatibility)
+frontend_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Frontend')
 template_path = os.path.join(frontend_path, 'Template')
 static_path = os.path.join(frontend_path, 'static')
 
