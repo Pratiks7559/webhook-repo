@@ -1,12 +1,8 @@
 from flask_pymongo import PyMongo
-from dotenv import load_dotenv
 import os
 
-# Load environment variables
-load_dotenv()
-
-# Get MongoDB URI from environment
-MONGODB_URI = os.getenv('MONGODB_URI', 'mongodb://localhost:27017/webhook_db')
+# Get MongoDB URI from environment (works on both local and Render)
+MONGODB_URI = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/webhook_db')
 
 print(f"📦 MongoDB URI: {MONGODB_URI}")
 
