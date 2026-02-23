@@ -20,7 +20,12 @@ app = Flask(__name__,
             static_folder=static_path,
             static_url_path='/static')
 
-CORS(app) 
+# Configure CORS with explicit settings to handle preflight requests
+CORS(app, 
+     resources={r"/events": {"origins": "*"}, 
+               r"/webhook": {"origins": "*"}},
+     methods=["GET", "POST", "OPTIONS"],
+     allow_headers=["Content-Type", "Authorization", "X-GitHub-Event"])
 
 # 4. Initialize Database using the database module
 db_connected = init_db(app)
