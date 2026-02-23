@@ -62,6 +62,10 @@ def get_events():
 
 @app.route('/webhook', methods=['GET', 'POST']) 
 def handle_webhook():
+    # Handle GitHub ping/test request
+    if request.method == 'GET':
+        return jsonify({'message': 'Webhook is active!'}), 200
+    
     try: 
         # Check if database is connected  
         if not mongo or not db_connected:  
