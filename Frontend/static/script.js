@@ -137,7 +137,6 @@ function applyFilters() {
     
     renderEvents();
     updateStats(filteredEvents);
-    updateChart(filteredEvents);
 }
 
 // Export
